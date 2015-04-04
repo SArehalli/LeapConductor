@@ -14,8 +14,6 @@ class ConductListener(Leap.Listener):
         self.init_velocity = Leap.Vector(0,0,0)
         self.init_time = 0
         self.stopped = [True, True, True];
-        self.audio = pyglet.media.load('beep.wav', streaming=False) 
-        controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE)
         self.player = midiPlayer()
         self.player.playMultiTrack(FILENAME)
 
