@@ -3,6 +3,8 @@ import time
 from threading import Thread
 
 BPS2T = 1000000 # BPS to Ticks 
+MAX_CHANGE = 10
+INITIAL_TEMPO = 60
 
 class midiPlayer():
     """ Player for midi files!"""
@@ -10,14 +12,14 @@ class midiPlayer():
     def __init__(self):
         self.out = mido.open_output(mido.get_output_names()[-1])
         self.channels = [] 
-        self.tempo = 0.5 # BPS
+        self.tempo = INITIAL_TEMPO 
 
     def play(self, track, TPB):
         """ plays a midi track to self.out """
         
         for message in track:
             if not isinstance(message, mido.MetaMessage):
-                time.sleep((message.time * self.tempo) / float(TPB))
+                time.sleep((message.time * 60/self.tempo) / float(TPB))
                 self.out.send(message)
 
     def playMultiTrack(self, filename):
@@ -32,9 +34,14 @@ class midiPlayer():
 
     def setTempo(self, tempo):
         """ adjusts the tempo of the file while playing """
-
-        self.tempo = tempo
-        message = mido.MetaMessage("set_tempo", tempo=int(tempo * BPS2T))
+        if abs(tempo - self.tempo) < MAX_CHANGE:
+            self.tempo = tempo
+        elif tempo - self.tempo > MAX_CHANGE:
+            self.tempo = self.tempo + MAX_CHANGE/2
+        elif self.tempo - tempo > MAX_CHANGE:
+            self.tempo = self.tempo - MAX_CHANGE/2
+        print(self.tempo)
+        message = mido.MetaMessage("set_tempo", tempo=int(mido.bpm2tempo(self.tempo)))
 
 if __name__ == "__main__":
     # TESTING
