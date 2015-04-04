@@ -4,7 +4,7 @@ import Leap, sys, thread, time
 from Leap import CircleGesture
 from play import midiPlayer
 
-FILENAME = 'deb_prel.mid'
+FILENAME = 'sounds/deb_prel.mid'
 
 class ConductListener(Leap.Listener):
     
